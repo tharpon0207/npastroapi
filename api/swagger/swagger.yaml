@@ -1,0 +1,905 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Project Test Harness
+host: localhost:10010
+basePath: /
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /auth:
+    x-swagger-router-controller: Authentication
+    post:
+      description: Authenticates Sign-In
+      operationId: authenticate
+      parameters:
+        - name: input
+          in: body
+          description: Credentials of user
+          required: true
+          schema:
+            $ref: "#/definitions/CredentialRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/AuthResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /session:
+    x-swagger-router-controller: Authentication
+    get:
+      description: Returns session data
+      # used as the method name of the controller
+      operationId: session
+      parameters:
+        - in: query
+          name: input
+          type: string
+          description: Pass all mandatory fields to generate B2B test data for user.
+          required: false
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+                description: Session data
+    delete:
+      description: Delete session data
+      # used as the method name of the controller
+      operationId: deleteSession
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+                description: Session data
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /cookie:
+    x-swagger-router-controller: Authentication
+    delete:
+      description: Clear browser cookie
+      # used as the method name of the controller
+      operationId: clearCookie
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+                description: Session data
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      
+  /signup:
+    x-swagger-router-controller: SignUp
+    post:
+      description: Creates new account
+      operationId: signup
+      parameters:
+        - name: input
+          in: body
+          description: Create user account with all fields filled
+          required: true
+          schema:
+            $ref: "#/definitions/addMemberRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/addMemberResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /editprofile:
+    x-swagger-router-controller: EditProfile
+    patch:
+      description: Edits Profile Information
+      operationId: edit
+      parameters:
+        - name: input
+          in: body
+          description: Edits information in user's profile
+          required: true
+          schema:
+            $ref: "#/definitions/editMemberRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/editMemberResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /deleteprofile/{id}:
+    x-swagger-router-controller: DeleteProfile
+    delete:
+      description: Deletes account
+      operationId: deleteProfile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The Student ID.
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DeleteMemberResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /getmembers:
+    x-swagger-router-controller: GetMembers
+    get:
+      description: Gets all members
+      operationId: getMembers
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /announcements:
+    x-swagger-router-controller: Announcements
+    post:
+      description: Adds announcements
+      operationId: addAnnouncement
+      parameters:
+        - name: input
+          in: body
+          description: Adds announcement
+          required: true
+          schema:
+            $ref: "#/definitions/addAnnouncementRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/addAnnouncementResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      description: Edits announcements
+      operationId: editAnnouncement
+      parameters:
+        - name: input
+          in: body
+          description: Edits announcement
+          required: true
+          schema:
+            $ref: "#/definitions/editAnnouncementRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/editAnnouncementResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      description: Gets all announcements
+      operationId: getAnnouncements
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /getSingleAnnouncement/{id}:
+    x-swagger-router-controller: Announcements
+    get:
+      description: Gets one announcement
+      operationId: getOneAnnouncement
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          description: Gets single announcement by id
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /deleteannouncement/{id}:
+    x-swagger-router-controller: Announcements
+    delete:
+      description: Deletes announcement
+      operationId: deleteAnnouncement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The Announcement ID.
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DeleteAnnouncementResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /events:
+    x-swagger-router-controller: Events
+    post:
+      description: Adds events
+      operationId: addEvent
+      parameters:
+        - name: input
+          in: body
+          description: Adds event
+          required: true
+          schema:
+            $ref: "#/definitions/addEventRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/addEventResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      description: Edits events
+      operationId: editEvent
+      parameters:
+        - name: input
+          in: body
+          description: Edits event
+          required: true
+          schema:
+            $ref: "#/definitions/editEventRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/editEventResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      description: Gets all events
+      operationId: getEvents
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /getSingleEvent/{id}:
+    x-swagger-router-controller: Events
+    get:
+      description: Gets one event
+      operationId: getOneEvent
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          description: Gets single event by id
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /deleteevent/{id}:
+    x-swagger-router-controller: Events
+    delete:
+      description: Deletes event
+      operationId: deleteEvent
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The Event ID.
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/DeleteEventResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+  /blogpost:
+    x-swagger-router-controller: Blog
+    post:
+      description: Uploads a new entry with title, schoolId, body
+      operationId: upload
+      parameters:
+        - name: input
+          in: body
+          description: posts
+          required: true
+          schema:
+            $ref: "#/definitions/postRequest"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UploadResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      description: Gets all blog posts
+      operationId: getAllPosts
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+
+definitions:
+  CredentialRequest:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Valid email
+      password:
+        type: string
+        description: Valid password
+    required:
+      - email
+      - password
+
+  addMemberRequest:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Valid username
+      password:
+        type: string
+        description: Valid password
+      firstname:
+        type: string
+        description: First name
+      lastname:
+        type: string
+        description: Last name
+      schoolid:
+        type: integer
+        description: School ID
+      grade:
+        type: integer
+        description: Grade in school. Grades 10-12, or 0 for staff
+      role:
+        type: string
+        description: Member or Moderator
+    required:
+      - password
+      - email
+      - firstname
+      - lastname
+      - schoolid
+      - grade
+
+  addMemberResponse:
+    required:
+      - error
+      - message
+      - member
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      member:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Valid username
+          password:
+            type: string
+            description: Valid password
+          firstname:
+            type: string
+            description: First name
+          lastname:
+            type: string
+            description: Last name
+          schoolid:
+            type: integer
+            description: School ID
+          grade:
+            type: integer
+            description: Grade in school. Grades 10-12, or 0 for staff
+          role:
+            type: string
+            description: Member or Moderator
+        required:
+          - email
+          - password
+          - firstname
+          - lastname
+
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+
+  AuthResponse:
+    required:
+      - error
+      - message
+      - member
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      member:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Valid username
+          password:
+            type: string
+            description: Valid password
+        required:
+          - email
+          - password
+
+  editMemberRequest:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Valid username
+      password:
+        type: string
+        description: Valid password
+      firstname:
+        type: string
+        description: First name
+      lastname:
+        type: string
+        description: Last name
+      schoolid:
+        type: integer
+        description: School ID
+      grade:
+        type: integer
+        description: Grade in school. Grades 10-12, or 0 for staff
+      role:
+        type: string
+        description: Member or Admin
+    required:
+      - schoolid
+
+  editMemberResponse:
+    required:
+      - error
+      - message
+      - member
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      member:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Valid username
+          password:
+            type: string
+            description: Valid password
+          firstname:
+            type: string
+            description: First name
+          lastname:
+            type: string
+            description: Last name
+          schoolid:
+            type: integer
+            description: School ID
+          grade:
+            type: integer
+            description: Grade in school. Grades 10-12, or 0 for staff
+
+  DeleteMemberResponse:
+    required:
+      - error
+      - message
+      - member
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      member:
+        type: object
+        properties:
+          schoolid:
+            type: integer
+            description: School ID
+
+  addAnnouncementRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Title
+      description:
+        type: string
+        description: Announcement body
+      id:
+        type: integer
+        description: Announcement ID
+    required:
+      - title
+      - description
+
+  addAnnouncementResponse:
+    required:
+      - error
+      - message
+      - announcement
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      announcement:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Announcement ID
+          title:
+            type: string
+            description: Announcement title
+          description:
+            type: string
+            description: Announcement description
+        required:
+          - title
+          - description
+
+  editAnnouncementRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Announcement title
+      description:
+        type: string
+        description: Announcement description
+      id:
+        type: integer
+        description: Announcement ID
+    required:
+      - id
+
+  editAnnouncementResponse:
+    required:
+      - error
+      - message
+      - member
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      member:
+        type: object
+        properties:
+          title:
+            type: string
+            description: Announcement title
+          description:
+            type: string
+            description: Announcement description
+          id:
+            type: string
+            description: Announcement ID
+
+  DeleteAnnouncementResponse:
+    required:
+      - error
+      - message
+      - announcement
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      announcement:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: School ID
+
+  GetResponse:
+    required:
+      - error
+      - message
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+
+  addEventRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Event title
+      description:
+        type: string
+        description: Event description
+      id:
+        type: integer
+        description: Event ID
+      Month:
+        type: string
+        description: month event
+      Day:
+        type: integer
+        description: day
+      start:
+        type: string
+        description: Event start time
+      end:
+        type: string
+        description: Event end time
+    required:
+      - title
+      - description
+
+  addEventResponse:
+    required:
+      - error
+      - message
+      - event
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      event:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Event ID
+          title:
+            type: string
+            description: Event title
+          description:
+            type: string
+            description: Event description
+          Month:
+            type: string
+            description: month event
+          Day:
+            type: integer
+            description: day
+          start:
+            type: string
+            description: Event start time
+          end:
+            type: string
+            description: Event end time
+        required:
+          - title
+          - description
+
+  editEventRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Event title
+      description:
+        type: string
+        description: Event description
+      id:
+        type: integer
+        description: Event ID
+      Month:
+        type: string
+        description: month event
+      Day:
+        type: integer
+        description: day
+      start:
+        type: string
+        description: Event start time
+      end:
+        type: string
+        description: Event end time
+    required:
+      - id
+
+  editEventResponse:
+    required:
+      - error
+      - message
+      - event
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      event:
+        type: object
+        properties:
+          title:
+            type: string
+            description: Event title
+          description:
+            type: string
+            description: Event description
+          id:
+            type: string
+            description: Event ID
+          Month: 
+            type: string
+            description: month event
+          Day:
+            type: integer
+            description: day
+          start:
+            type: string
+            description: Event start time
+          end:
+            type: string
+            description: Event end time
+
+  DeleteEventResponse:
+    required:
+      - error
+      - message
+      - event
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      event:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Event ID
+  postRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Title of the entry
+      madebyID:
+        type: integer
+        description: ID of the creator
+      body:
+        type: string
+        description: Body content of the entry
+    required:
+      - title
+      - madebyID
+      - body
+  UploadResponse:
+    required:
+      - error
+      - message
+      - blogpost
+    properties:
+      message:
+        type: string
+      error:
+        type: boolean
+      blogpost:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Upload ID
+          title:
+            type: string
+            description: Title of the entry
+          madeby:
+            type: string
+            description: Name of the creator
+          madebyID:
+            type: integer
+            description: ID of the creator
+          body:
+            type: string
+            description: Body content of the entry
+          pic1:
+            type: string
+            format: byte
+            description: Base64-encoded first image
+          pic2:
+            type: string
+            format: byte
+            description: Base64-encoded second image
+          pic3:
+            type: string
+            format: byte
+            description: Base64-encoded third image
+        required:
+          - title
+          - madeby
+          - madebyID
+          - body
